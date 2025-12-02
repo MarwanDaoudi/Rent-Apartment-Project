@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpdateBookingRequest;
+use App\Models\Apartment;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,14 @@ class BookingController extends Controller
         return false;
     }
 
+    public function calculateTotalCost(int $priceForMonth, $start_date, $end_date)
+    {
+        $days = $start_date->diffInDays($end_date);
+        $months = ceil($days / 30);
+        $totalCost = $months * $priceForMonth;
+        return $totalCost;
+    }
+
     public function store(StoreBookingRequest $request, int $apartment_id)
     {
         $user = Auth::user();
@@ -38,6 +47,9 @@ class BookingController extends Controller
         $validatedData = $request->validated();
         $validatedData['user_id'] = $user_id;
         $validatedData['apartment_id'] = $apartment_id;
+        
+        $apartment = Apartment::findOrFail($apartment_id);
+        $validatedData['total_cost'] = $this->calculateTotalCost($apartment->price_for_month, $request->start_date, $request->end_date);
         if (!$this->hasDateOverlap($apartment_id, $request->start_date, $request->end_date)) {
             $booking = Booking::create($validatedData);
             return response()->json($booking, 201);

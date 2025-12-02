@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreApartmentRequest;
 use App\Http\Requests\UpdateApartmentRequest;
 use App\Models\Apartment;
+use App\Models\Availability;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -95,6 +96,11 @@ class ApartmentController extends Controller
         }
         if($request->isAccept) {
             $booking->status = 'confirmed';
+            $availability = Availability::create([
+                'apartment_id'=>$apartment_id,
+                'start_non_available_date'=>$booking->start_date,
+                'end_non_available_date'=>$booking->end_date,
+            ]);
             return response()->json(['message'=> 'The booking has confirmed.','booking'=>$booking]);
         }
         else {
