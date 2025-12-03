@@ -56,4 +56,9 @@ class UserController extends Controller
         return response()->json(['message'=>'User Logout Successfully'], 200);
     }
 
+    function index() {
+        $users = User::all();
+        return response()->json(['users'=>$users],200);
+    }
+
 }

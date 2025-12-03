@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->integer('space');
             $table->integer('rooms');
+            $table->float('rating')->default(0);
             $table->integer('price_for_month');
             $table->string('description');
             $table->string('directions');

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Http\ResponseTrait;
@@ -20,8 +21,11 @@ Route::get('logout', [UserController::class, 'logout'])->middleware('auth:sanctu
 Route::middleware('auth:sanctum')->group(function () {
     //-----------------------------------------------------
     // for admin
-    Route::get('getAllTemporaryUsers', [UserController::class, 'temporaryIndex'])->middleware('isAdmin');
-    Route::post('acceptUser/{id}', [UserController::class, 'acceptUser'])->middleware('isAdmin');
+    Route::middleware('isAdmin')->group(function () {
+        Route::get('getAllTemporaryUsers', [UserController::class, 'temporaryIndex']);
+        Route::post('acceptUser/{id}', [UserController::class, 'acceptUser']);
+        Route::get('allusers', [UserController::class, 'index']);
+    });
     /////////////////////////////////////////////////////////////////
 
 
@@ -30,8 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('isLandlord')->group(function () {
 
         Route::apiResource('apartment', ApartmentController::class);
-        Route::get('showBookingsForApartment/{id}', [ApartmentController::class, 'showBookingsForApartment']);
-        Route::get('showAllBookingsForLandlord', [ApartmentController::class, 'showAllBookings']);
+        Route::get('BookingsApartment/{id}', [ApartmentController::class, 'showBookingsForApartment']);
+        Route::get('BookingsLandlord', [ApartmentController::class, 'showAllBookings']);
         Route::post('confirmBooking/{booking_id}', [ApartmentController::class, 'confirmBooking']);
     });
     /////////////////////////////////////////////////////////////////
@@ -41,20 +45,16 @@ Route::middleware('auth:sanctum')->group(function () {
     // for tenant مستاجر
     Route::middleware('isTenant')->group(function () {
 
-        Route::get('apartment/ForTenant', [ApartmentController::class, 'indexAll']);
-        Route::get('apartment/ForTenant/{id}', [ApartmentController::class, 'showForTenant']);
-        Route::post('apartment/toggleFavourite', [ApartmentController::class, 'toggleFavorite']);
-        Route::get('', [ApartmentController::class, 'getFavorites']);
-        //#######################################################################################
-        Route::apiResource('booking', BookingController::class)->except(['store']);
-
-        Route::post('booking/{apartment_id}', [BookingController::class, 'store']);
-        // Route::get('booking',[BookingController::class,'index']);
-        // Route::get('booking/{id}',[BookingController::class,'show']);
-        // Route::put('booking/{id}',[BookingController::class,'update']);
-        // Route::delete('booking/{id}',[BookingController::class,'destroy']);
+        Route::prefix('apartment')->group(function () {
+            Route::get('/Tenant', [ApartmentController::class, 'indexAll']);
+            Route::get('/Tenant/{id}', [ApartmentController::class, 'showForTenant']);
+            Route::post('/toggleFavourite', [ApartmentController::class, 'toggleFavorite']);
+            Route::get('/favorites', [ApartmentController::class, 'getFavorites']);
+            //#######################################################################################
+            Route::apiResource('/booking', BookingController::class)->except(['store']);
+            Route::post('/booking/{apartment_id}', [BookingController::class, 'store']);
+            //#######################################################################################
+            Route::apiResource('rate', [ReviewController::class])->except(['index']);;
+        });
     });
-    /////////////////////////////////////////////////////////////////
-
-
 });
