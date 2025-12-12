@@ -47,6 +47,9 @@ class Apartment extends Model
             ->when($filters['city'] ?? null, function ($q, $city) {
                 $q->where('city', $city);
             })
+            ->when($filters['town'] ?? null, function ($q, $town) {
+                $q->where('town', $town);
+            })
             ->when($filters['min_price'] ?? null, function ($q, $min) {
                 $q->where('price_for_month', '>=', $min);
             })

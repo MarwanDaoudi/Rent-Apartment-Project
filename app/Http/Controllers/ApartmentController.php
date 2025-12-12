@@ -162,6 +162,7 @@ class ApartmentController extends Controller
     {
         $apartments = Apartment::filter($request->only([
             'city',
+            'town',
             'min_price',
             'max_price',
             'rooms',

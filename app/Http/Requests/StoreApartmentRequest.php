@@ -25,8 +25,6 @@ class StoreApartmentRequest extends FormRequest
             'city' => 'required|string|max:255',
 
             'town' => 'required|string|max:255',
-            
-            'street' => 'required|string|max:255',
 
             'space' => 'required|numeric|min:1',
 
@@ -42,7 +40,7 @@ class StoreApartmentRequest extends FormRequest
 
             'description' => 'required|string|min:10',
 
-            'directions' => 'required|string|min:5',
+            'features' => 'features|string',
 
             'images' => 'required|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',

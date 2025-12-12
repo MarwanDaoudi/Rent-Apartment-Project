@@ -48,7 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('apartment/')->group(function () {
             Route::get('Tenant', [ApartmentController::class, 'indexAll']);
             Route::get('Tenant/{id}', [ApartmentController::class, 'showForTenant']);
-            Route::post('toggleFavourite', [ApartmentController::class, 'toggleFavorite']);
+            Route::post('toggleFavourite/{apartmentId}', [ApartmentController::class, 'toggleFavorite']);
             Route::get('favorites', [ApartmentController::class, 'getFavorites']);
             //#######################################################################################
             Route::apiResource('/booking', BookingController::class)->except(['store']);
@@ -56,7 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
             //#######################################################################################
             Route::get('{apartment_id}',[AvailabilityController::class,'showAvailabilty']);
             //#######################################################################################
-            Route::apiResource('rate',ReviewController::class)->except(['index']);;
+            Route::apiResource('rate',ReviewController::class)->except(['index']);
             //#######################################################################################
             Route::get('filter',[ApartmentController::class,'filteringApartment']);
         });

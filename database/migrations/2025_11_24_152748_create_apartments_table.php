@@ -16,14 +16,13 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users','id')->cascadeOnDelete();
             $table->string('city');
             $table->string('town');
-            $table->string('street');
             $table->string('location')->nullable();
             $table->integer('space');
             $table->integer('rooms');
             $table->float('rating')->default(0);
             $table->integer('price_for_month');
             $table->string('description');
-            $table->string('directions');
+            $table->string('features');
             $table->timestamps();
         });
     }
