@@ -40,7 +40,7 @@ class StoreApartmentRequest extends FormRequest
 
             'description' => 'required|string|min:10',
 
-            'features' => 'required|array|string',
+            'features' => 'required|string',
 
             'images' => 'required|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
