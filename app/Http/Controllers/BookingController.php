@@ -52,6 +52,9 @@ class BookingController extends Controller
 
         $apartment = Apartment::findOrFail($apartment_id);
         $validatedData['total_cost'] = $this->calculateTotalCost($apartment->price_for_month, $request->start_date, $request->end_date);
+        if ($user->balance < $validatedData['total_cost']) {
+            return response()->json(['message' => 'you can\'t book this apartment because you don\'t have enough balance'], 400);
+        }
         if (!$this->hasDateOverlap($apartment_id, $request->start_date, $request->end_date)) {
             $booking = Booking::create($validatedData);
             return response()->json($booking, 201);
@@ -70,7 +73,12 @@ class BookingController extends Controller
         if ($booking->status == 'pending') {
             if (!$this->hasDateOverlap($booking->apartment_id, $request->start_date, $request->end_date)) {
                 $apartment = Apartment::findOrFail($booking->apartment_id);
-                $booking->total_cost = $this->calculateTotalCost($apartment->price_for_month, $request->start_date, $request->end_date);;
+                $total_cost = $this->calculateTotalCost($apartment->price_for_month, $request->start_date, $request->end_date);
+                if ($user->balance < $total_cost) {
+                    return response()->json(['message' => 'you can\'t update this booking because you don\'t have enough balance'], 400);
+                }
+                $booking->total_cost = $total_cost;
+                $booking->save();
                 $booking->update($request->validated());
                 return response()->json(['message' => 'The booking has updated', 'booking' => $booking], 200);
             }

@@ -116,6 +116,12 @@ class ApartmentController extends Controller
         }
         if ($request->isAccept) {
             $booking->status = 'confirmed';
+            $booking->save();
+            $user->balance += $booking->total_cost;
+            $user->save();
+            $tenant = $booking->user;
+            $tenant->balance -= $booking->total_cost;
+            $tenant->save();
             $availability = Availability::create([
                 'apartment_id' => $apartment_id,
                 'start_non_available_date' => $booking->start_date,

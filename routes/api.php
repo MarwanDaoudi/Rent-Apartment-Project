@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('getAllTemporaryUsers', [UserController::class, 'temporaryIndex']);
         Route::post('acceptUser/{id}', [UserController::class, 'acceptUser']);
         Route::get('allusers', [UserController::class, 'index']);
+        Route::delete('deleteUser/{id}', [UserController::class, 'destroy']);
     });
     /////////////////////////////////////////////////////////////////
 
