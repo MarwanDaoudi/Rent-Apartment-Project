@@ -175,7 +175,8 @@ class ApartmentController extends Controller
             'min_price',
             'max_price',
             'rooms',
-            'min_rating'
+            'min_rating',
+            'space'
         ]))->get();
 
         return response()->json(['apartments'=>$apartments],200);

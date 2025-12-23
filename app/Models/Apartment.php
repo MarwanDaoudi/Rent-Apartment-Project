@@ -59,6 +59,9 @@ class Apartment extends Model
             ->when($filters['rooms'] ?? null, function ($q, $rooms) {
                 $q->where('rooms', $rooms);
             })
+            ->when($filters['space'] ?? null, function ($q, $space) {
+                $q->where('space', $space);
+            })
             ->when($filters['min_rating'] ?? null, function ($q, $rating) {
                 $q->where('rating', '>=', $rating);
             });
