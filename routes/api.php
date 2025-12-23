@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('acceptUser/{id}', [UserController::class, 'acceptUser']);
         Route::get('allusers', [UserController::class, 'index']);
         Route::delete('deleteUser/{id}', [UserController::class, 'destroy']);
+        Route::post('increaseBalance/{id}',[UserController::class, 'addBalance']);
     });
     /////////////////////////////////////////////////////////////////
 
@@ -40,7 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('confirmBooking/{booking_id}', [ApartmentController::class, 'confirmBooking']);
     });
     /////////////////////////////////////////////////////////////////
-
+    // for التنين
+    Route::get('profile/{id}',[UserController::class,'show']);
 
     /////////////////////////////////////////////////////////////////
     // for tenant مستاجر

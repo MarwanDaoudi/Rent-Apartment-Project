@@ -20,6 +20,7 @@ class AdminSeeder extends Seeder
                 'last_name' => 'Admin',
                 'phone' => '99999999',
                 'birthday' => '1990-01-01',
+                'balance' => '1000000',
                 'profile_image' => 'default.png',
                 'id_image' => 'default-id.png',
                 'role' => 'admin',

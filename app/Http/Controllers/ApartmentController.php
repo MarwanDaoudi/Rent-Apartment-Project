@@ -44,7 +44,7 @@ class ApartmentController extends Controller
             return response()->json(['message' => 'Unauthurized'], 403);
         }
         $apartment->update($request->validated());
-        return response()->json(['apartment'=>$apartment,'images'=>$apartment->images], 200);
+        return response()->json(['apartment'=>$apartment], 200);
     }
 
     //للمؤجر مشان يشوف الشقق يلي عندو ياها
@@ -98,7 +98,7 @@ class ApartmentController extends Controller
     {
         $user = Auth::user();
         $bookings = $user->apartments->flatMap->bookings;
-        return response()->json($bookings, 200);
+        return response()->json(['bookings'=>$bookings], 200);
     }
 
     // مشان المؤجر يوافق عالحجز او لا

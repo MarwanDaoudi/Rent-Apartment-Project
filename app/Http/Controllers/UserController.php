@@ -62,7 +62,7 @@ class UserController extends Controller
             return response()->json(['message'=>'the admin hasn\'t accepted you yet, please try again later'],404);
         }
         if (!Auth::attempt($request->only('phone','password'))) {
-            return response()->json(['messanger'=>'Unauthurized'],401);
+            return response()->json(['message'=>'Unauthurized'],401);
         }
         $user = User::where('phone',$request->phone)->first();
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -83,6 +83,18 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
         return response()->json(['message'=>'The user has been deleted'],204);
+    }
+
+    function addBalance(int $id, Request $request) {
+        $user = User::findOrFail($id);
+        $user->balance += $request->amount;
+        $user->save();
+        return response()->json(['message'=>'the balance increase successfully.','user'=>$user]);
+    }
+
+    function show(int $id) {
+        $user = User::findOrFail($id);
+        return response()->json(['user'=>$user],200);
     }
 
 }
