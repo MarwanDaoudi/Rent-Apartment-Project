@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('birthday');
             $table->string('profile_image');
             $table->string('id_image');
-            $table->float('balance');
+            $table->float('balance')->default(0);
             $table->enum('role',['admin','landlord','tenant']);
             $table->string('password');
             $table->rememberToken();
