@@ -8,9 +8,7 @@ use Carbon\Carbon;
 class Booking extends Model
 {
     //
-
-    
-
+    protected $guarded = ['id'];
 
     public function user()
     {

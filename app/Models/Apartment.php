@@ -60,10 +60,10 @@ class Apartment extends Model
                 $q->where('rooms', $rooms);
             })
             ->when($filters['min_space'] ?? null, function ($q, $min) {
-                $q->where('price_for_month', '>=', $min);
+                $q->where('space', '>=', $min);
             })
-            ->when($filters['max_price'] ?? null, function ($q, $max) {
-                $q->where('price_for_month', '<=', $max);
+            ->when($filters['max_space'] ?? null, function ($q, $max) {
+                $q->where('space', '<=', $max);
             })
             ->when($filters['min_rating'] ?? null, function ($q, $rating) {
                 $q->where('rating', '>=', $rating);

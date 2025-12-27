@@ -60,7 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
             //#######################################################################################
             Route::get('{apartment_id}',[AvailabilityController::class,'showAvailabilty']);
             //#######################################################################################
-            Route::apiResource('rate',ReviewController::class)->except(['index']);
+            Route::apiResource('rate',ReviewController::class)->except(['store']);
+            Route::post('rate/{apartment_id}', [ReviewController::class, 'store']);
             //#######################################################################################
             Route::get('filter',[ApartmentController::class,'filteringApartment']);
         });
