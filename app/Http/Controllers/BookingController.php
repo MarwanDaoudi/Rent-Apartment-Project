@@ -134,7 +134,7 @@ class BookingController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $bookings = $user->bookings()->with(['apartment:city,town,description','apartment.images:id,apartment_id,image'])->get();
+        $bookings = $user->bookings()->with(['apartment:id,city,town,description','apartment.images:id,apartment_id,image'])->get();
         return response()->json($bookings, 200);
     }
 }
