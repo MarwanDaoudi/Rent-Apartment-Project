@@ -10,6 +10,7 @@ use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ApartmentController extends Controller
 {
@@ -152,8 +153,8 @@ class ApartmentController extends Controller
                     if (
                         $mybooking->status === 'pending'
                         && $mybooking->id !== $booking->id
-                        && ($mybooking->start_date->lt($booking->end_date)
-                            && $booking->start_date->lt($mybooking->end_date))
+                        && (Carbon::parse($mybooking->start_date)->lt(Carbon::parse($booking->end_date))
+                            && Carbon::parse($booking->start_date)->lt(Carbon::parse($mybooking->end_date)))
                     ) {
                         $mybooking->status = 'rejected';
                         $mybooking->save();
