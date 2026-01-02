@@ -79,7 +79,13 @@ class ReviewController extends Controller
 
     public function indexForApartment(int $apartment_id)
     {
-        $reviews = Reveiw::where('apartment_id', $apartment_id)->get();
-        return response()->json(['revewis' => $reviews], 200);
+        $user = Auth::user();
+        $user_id = $user->id;
+        $apartment = Apartment::findOrFail($apartment_id);
+        if ($user->role === "tenant" || $apartment->user_id === $user_id) {
+            $reviews = Reveiw::where('apartment_id', $apartment_id)->get();
+            return response()->json(['revewis' => $reviews], 200);
+        }
+        return response()->json(['message' => 'Unauthurized'], 403);
     }
 }
