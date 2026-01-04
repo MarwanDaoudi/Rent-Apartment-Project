@@ -26,9 +26,8 @@ class StoreUserRequest extends FormRequest
             'password'=>'required|string|min:8',
             'first_name'=>'required|string|max:16',
             'last_name'=>'required|string|max:16',
-            'profile_image'=>'required|image|max:4096',
-            'id_image'=>'required|image|max:4096',
-            // 'balance'=>'nullable|numeric|min:0',
+            'profile_image'=>'required|image',
+            'id_image'=>'required|image',
             'role'=>'required|in:landlord,tenant',
             'birthday'=>'required|date|before:today|after:1990-01-01'
         ];

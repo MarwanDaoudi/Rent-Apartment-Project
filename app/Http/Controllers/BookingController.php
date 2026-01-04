@@ -106,16 +106,14 @@ class BookingController extends Controller
             ]);
             return response()->json(['message' => 'The booking has canceld'], 204);
         }
-        if ($booking->status == 'confirmed') {
+        if ($booking->status == 'confirmed' && (Carbon::parse($booking->start_date)->lt(today()))) {
             $booking->update([
                 'status' => 'canceled'
             ]);
             $halfCost = $booking->total_cost / 2;
-            $user->balance += $halfCost;
-            $user->save();
             $owner = $booking->apartment_id->user_id;
-            $owner->balance -= $halfCost;
-            $owner->save();
+            $user->increment('balance', $halfCost);
+            $owner->decrement('balance', $halfCost);
             $availabilty = Availability::where('apartment_id', $booking->apartment_id)
                 ->where('start_non_available_date', $booking->start_date)
                 ->where('end_non_available_date', $booking->end_date);

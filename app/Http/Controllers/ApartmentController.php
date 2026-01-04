@@ -251,4 +251,9 @@ class ApartmentController extends Controller
 
         return response()->json(['apartments' => $apartments], 200);
     }
+
+    public function getLastFiveApartment()
+    {
+        return Apartment::latest()->take(5)->get();
+    }
 }
