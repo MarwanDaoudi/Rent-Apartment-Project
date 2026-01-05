@@ -32,14 +32,18 @@ class BookingController extends Controller
         return false;
     }
 
-    public function calculateTotalCost(int $priceForMonth, $start_date, $end_date)
+    public function calculateTotalCost($price_for_month, $start_date, $end_date)
     {
-        $start_date = Carbon::parse($start_date);
-        $end_date = Carbon::parse($end_date);
-        $days = $start_date->diffInDays($end_date);
-        $months = ceil($days / 30);
-        $totalCost = $months * $priceForMonth;
-        return $totalCost;
+        $start = Carbon::parse($start_date);
+        $end = Carbon::parse($end_date);
+        $fullMonths = $start->diffInMonths($end);
+        if ($start->copy()->addMonths($fullMonths)->lessThan($end)) {
+            $fullMonths++;
+        }
+        if ($fullMonths == 0 && $start->lessThan($end)) {
+            $fullMonths = 1;
+        }
+        return $fullMonths * $price_for_month;
     }
 
     public function store(StoreBookingRequest $request, int $apartment_id)
@@ -51,8 +55,9 @@ class BookingController extends Controller
         $validatedData['apartment_id'] = $apartment_id;
 
         $apartment = Apartment::findOrFail($apartment_id);
-        $validatedData['total_cost'] = $this->calculateTotalCost($apartment->price_for_month, $request->start_date, $request->end_date);
-        if ($user->balance < $validatedData['total_cost']) {
+        $total_cost = $this->calculateTotalCost($apartment->price_for_month, $request->start_date, $request->end_date);
+        $validatedData['total_cost'] = $total_cost;
+        if ($user->balance < $total_cost) {
             return response()->json(['message' => 'you can\'t book this apartment because you don\'t have enough balance'], 400);
         }
         if (!$this->hasDateOverlap($apartment_id, $request->start_date, $request->end_date)) {
@@ -101,20 +106,19 @@ class BookingController extends Controller
             ]);
             return response()->json(['message' => 'The booking has canceld'], 204);
         }
-        if ($booking->status == 'confirmed') {
+        // الحجز موافق عليه و لسا ما بلش (بداية الحجز  اكبر من اليوم لانه مستقبلي )
+        if ($booking->status == 'confirmed' && (Carbon::parse($booking->start_date)->gt(today()))) {
             $booking->update([
                 'status' => 'canceled'
             ]);
             $halfCost = $booking->total_cost / 2;
-            $user->balance += $halfCost;
-            $user->save();
-            $owner = $booking->apartment_id->user_id;
-            $owner->balance -= $halfCost;
-            $owner->save();
-            $availabilty = Availability::where('apartment_id',$booking->apartment_id)
-            ->where('start_non_available_date',$booking->start_date)
-            ->where('end_non_available_date',$booking->end_date);
-            $availabilty->delete();
+            $owner = $booking->apartment->user;
+            $owner->increment('balance', $halfCost);
+            $user->decrement('balance', $halfCost);
+            $availabilty = Availability::where('apartment_id', $booking->apartment_id)
+                ->where('start_non_available_date', $booking->start_date)
+                ->where('end_non_available_date', $booking->end_date)
+                ->delete();
             return response()->json(['message' => 'The booking has canceld'], 204);
         }
         return response()->json(['message' => 'You can\'t cancel this booking']);
@@ -134,7 +138,7 @@ class BookingController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $bookings = $user->bookings;
-        return response($bookings, 200);
+        $bookings = $user->bookings()->with(['apartment:id,city,town,description', 'apartment.images:id,apartment_id,image'])->get();
+        return response()->json($bookings, 200);
     }
 }

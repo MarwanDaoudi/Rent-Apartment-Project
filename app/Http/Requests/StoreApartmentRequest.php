@@ -42,8 +42,8 @@ class StoreApartmentRequest extends FormRequest
 
             'features' => 'required|string',
 
-            'images' => 'required|array|max:5',
-            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp',
         ];
     }
 }

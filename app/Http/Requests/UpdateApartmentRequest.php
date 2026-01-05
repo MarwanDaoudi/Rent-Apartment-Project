@@ -22,11 +22,15 @@ class UpdateApartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'space' => 'sometimes|numeric|min:1',
+            'rooms' => 'sometimes|integer|min:1',
             'description' => 'sometimes|string|min:10',
-            'features' => 'sometimes|array|string',
+            'features' => 'sometimes|string',
             'price_for_month' => 'sometimes|numeric|min:0',
-            'images' => 'sometimes|array|max:5',
-            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp',
+            'deleted_images' => 'sometimes|array',
+            'deleted_images.*' => 'exists:images,id',
         ];
     }
 }

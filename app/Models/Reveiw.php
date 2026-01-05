@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reveiw extends Model
 {
     //
-    protected $fillable = ['rate','comment'];
+    protected $guarded = ['id'];
 
     public function user() {
         return $this->belongsTo(User::class);

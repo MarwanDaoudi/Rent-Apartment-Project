@@ -34,7 +34,7 @@ class Booking extends Model
             $months = (int) ceil($days / 30);
     
             $booking->total_cost =
-                $months * $booking->apartment->monthly_price;
+                $months * $booking->apartment->price_for_month;
         });
     }
 

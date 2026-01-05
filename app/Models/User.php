@@ -34,6 +34,10 @@ class User extends Authenticatable
         return $this->hasMany(Apartment::class);
     }
 
+    public function notification() {
+        return $this->hasMany(Notification::class);
+    }
+
     public function reveiws() {
         return $this->hasMany(Reveiw::class);
     }
