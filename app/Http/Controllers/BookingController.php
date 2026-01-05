@@ -106,18 +106,19 @@ class BookingController extends Controller
             ]);
             return response()->json(['message' => 'The booking has canceld'], 204);
         }
-        if ($booking->status == 'confirmed' && (Carbon::parse($booking->start_date)->lt(today()))) {
+        // الحجز موافق عليه و لسا ما بلش (بداية الحجز  اكبر من اليوم لانه مستقبلي )
+        if ($booking->status == 'confirmed' && (Carbon::parse($booking->start_date)->gt(today()))) {
             $booking->update([
                 'status' => 'canceled'
             ]);
             $halfCost = $booking->total_cost / 2;
-            $owner = $booking->apartment_id->user_id;
-            $user->increment('balance', $halfCost);
-            $owner->decrement('balance', $halfCost);
+            $owner = $booking->apartment->user;
+            $owner->increment('balance', $halfCost);
+            $user->decrement('balance', $halfCost);
             $availabilty = Availability::where('apartment_id', $booking->apartment_id)
                 ->where('start_non_available_date', $booking->start_date)
-                ->where('end_non_available_date', $booking->end_date);
-            $availabilty->delete();
+                ->where('end_non_available_date', $booking->end_date)
+                ->delete();
             return response()->json(['message' => 'The booking has canceld'], 204);
         }
         return response()->json(['message' => 'You can\'t cancel this booking']);

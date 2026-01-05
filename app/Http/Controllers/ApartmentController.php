@@ -175,19 +175,27 @@ class ApartmentController extends Controller
                     'start_non_available_date' => $booking->start_date,
                     'end_non_available_date' => $booking->end_date,
                 ]);
-                $allBookings = Booking::where('apartment_id', $apartment_id)->get();
-                foreach ($allBookings as $mybooking) {
-                    if (
-                        $mybooking->status === 'pending'
-                        && $mybooking->id !== $booking->id
-                        && (Carbon::parse($mybooking->start_date)->lt(Carbon::parse($booking->end_date))
-                            && Carbon::parse($booking->start_date)->lt(Carbon::parse($mybooking->end_date)))
-                    ) {
-                        $mybooking->status = 'rejected';
-                        $mybooking->save();
-                    }
-                }
-                return response()->json(['message' => 'The booking has confirmed.', 'booking' => $booking]);
+                // $allBookings = Booking::where('apartment_id', $apartment_id)->get();
+                // foreach ($allBookings as $mybooking) {
+                //     if (
+                //         $mybooking->status === 'pending'
+                //         && $mybooking->id !== $booking->id
+                //         && (Carbon::parse($mybooking->start_date)->lt(Carbon::parse($booking->end_date))
+                //             && Carbon::parse($booking->start_date)->lt(Carbon::parse($mybooking->end_date)))
+                //     ) {
+                //         $mybooking->status = 'rejected';
+                //         $mybooking->save();
+                //     }
+                // }
+                Booking::where('apartment_id', $apartment->id)
+                    ->where('id', '!=', $booking->id)
+                    ->where('status', 'pending')
+                    ->where(function ($query) use ($booking) {
+                        $query->where('start_date', '<', $booking->end_date)
+                            ->where('end_date', '>', $booking->start_date);
+                    })
+                    ->update(['status' => 'rejected']);
+                return response()->json(['message' => 'The booking has confirmed and conflicting requests has rejected.', 'booking' => $booking]);
             } else {
                 $booking->status = 'rejected';
                 $booking->save();
@@ -254,6 +262,6 @@ class ApartmentController extends Controller
 
     public function getLastFiveApartment()
     {
-        return Apartment::latest()->take(5)->get();
+        return Apartment::with('images')->latest()->take(5)->get();
     }
 }
